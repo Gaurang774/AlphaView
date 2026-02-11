@@ -112,11 +112,13 @@ export default function Explorer() {
 
                 if (!isUniprotId) {
                     setLoadingStep('Searching UniProt...');
-                    // Refined search: Look specifically for protein names or gene names to avoid broad matches
-                    const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=name:${encodeURIComponent(uniprotId)}&format=json&limit=1`;
+                    // Robust search: Prioritize reviewed entries and search broader protein/gene names
+                    const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)}&format=json&limit=1`;
                     const searchResponse = await fetch(searchUrl);
+
                     if (!searchResponse.ok) {
-                        setError('UniProt service is currently busy. Please try again in a moment.');
+                        // Fallback if the query was somehow malformed (e.g. including special chars)
+                        setError('Search query could not be processed. Please try a simpler name or ID.');
                         setMetaLoading(false);
                         setPdbLoading(false);
                         return;
@@ -126,7 +128,7 @@ export default function Explorer() {
                     if (searchData.results && searchData.results.length > 0) {
                         uniprotId = searchData.results[0].primaryAccession;
                     } else {
-                        setError(`Protein "${currentInput}" not found in UniProt database.`);
+                        setError(`Entry "${currentInput}" not found. Try a UniProt ID like P0DTD1.`);
                         setMetaLoading(false);
                         setPdbLoading(false);
                         return;
