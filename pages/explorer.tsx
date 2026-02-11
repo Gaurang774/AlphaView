@@ -114,13 +114,21 @@ export default function Explorer() {
                     setLoadingStep('Searching UniProt...');
                     const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)}&format=json&limit=1`;
                     const searchResponse = await fetch(searchUrl);
-                    if (!searchResponse.ok) throw new Error('UniProt service busy');
+                    if (!searchResponse.ok) {
+                        setError('UniProt service is currently busy. Please try again in a moment.');
+                        setMetaLoading(false);
+                        setPdbLoading(false);
+                        return;
+                    }
 
                     const searchData = await searchResponse.json();
                     if (searchData.results && searchData.results.length > 0) {
                         uniprotId = searchData.results[0].primaryAccession;
                     } else {
-                        throw new Error(`Protein "${currentInput}" not found`);
+                        setError(`Protein "${currentInput}" not found in UniProt database.`);
+                        setMetaLoading(false);
+                        setPdbLoading(false);
+                        return;
                     }
                 }
 
