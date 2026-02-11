@@ -1,4 +1,4 @@
-import { Info, ExternalLink, Activity, Target, BookOpen, ShieldCheck, Volume2, VolumeX, Zap } from 'lucide-react';
+import { Info, ExternalLink, Activity, Target, BookOpen, ShieldCheck, RefreshCw, Volume2, VolumeX, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface SelectionInfo {

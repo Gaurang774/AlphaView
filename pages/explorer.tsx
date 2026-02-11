@@ -133,21 +133,33 @@ export default function Explorer() {
 
                 if (!isUniprotId) {
                     setLoadingStep('Searching UniProt...');
-                    const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)}&format=json&limit=1`;
-                    const searchResponse = await fetchWithRetry(searchUrl);
+                    // Robust search: Prioritize reviewed entries (Swiss-Prot) for maximum reliability
+                    let searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)} AND (reviewed:true)&format=json&limit=1`;
+                    let searchResponse = await fetchWithRetry(searchUrl);
 
                     if (!searchResponse.ok) {
-                        setError(`UniProt Search Failed (${searchResponse.status}). The service might be under heavy load.`);
+                        setError(`UniProt Search Failed (${searchResponse.status}). Service might be unstable.`);
                         setMetaLoading(false);
                         setPdbLoading(false);
                         return;
                     }
 
-                    const searchData = await searchResponse.json();
+                    let searchData = await searchResponse.json();
+
+                    // Fallback: If no reviewed entries found, try a broader search including unreviewed
+                    if (!searchData.results || searchData.results.length === 0) {
+                        console.log(`[Explorer] No reviewed entries for "${uniprotId}", trying broad search...`);
+                        searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)}&format=json&limit=1`;
+                        searchResponse = await fetchWithRetry(searchUrl);
+                        if (searchResponse.ok) {
+                            searchData = await searchResponse.json();
+                        }
+                    }
+
                     if (searchData.results && searchData.results.length > 0) {
                         uniprotId = searchData.results[0].primaryAccession;
                     } else {
-                        setError(`Protein "${currentInput}" not found. Try a specific ID like P0DTD1.`);
+                        setError(`Entry "${currentInput}" not found. Try a specific ID like P0DTD1 or P69905.`);
                         setMetaLoading(false);
                         setPdbLoading(false);
                         return;

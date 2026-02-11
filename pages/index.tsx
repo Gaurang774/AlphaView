@@ -22,15 +22,16 @@ export default function Home() {
     // 1. UniProt Accessions
     const isAccession = /^[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$/i.test(cleanInput);
 
-    // 2. Gene names/Common names (2-15 chars, must contain letters)
-    const isName = /^[A-Z][A-Z0-9-.]{1,15}$/i.test(cleanInput) && /[A-Z]/i.test(cleanInput);
+    // 2. Gene names/Common names (allow spaces, dashes, dots, underscores)
+    const isName = /^[A-Z0-9\s.\-_]{2,30}$/i.test(cleanInput) && /[A-Z]/i.test(cleanInput);
 
-    // Check for obviously "wrong" strings
-    const isGibberish = /^(.)\1{2,}$/i.test(cleanInput) || cleanInput.length > 20 || /^[0-9]{1,3}$/.test(cleanInput);
+    // Filter out obviously "wrong" strings (just numbers or too short)
+    const isTooShort = cleanInput.length < 2;
+    const isJustNumbers = /^[0-9]+$/.test(cleanInput);
 
-    if (cleanInput && (isAccession || isName) && !isGibberish) {
+    if (cleanInput && (isAccession || isName) && !isJustNumbers && !isTooShort) {
       setError(false);
-      router.push(`/explorer?id=${cleanInput.toUpperCase()}`);
+      router.push(`/explorer?id=${encodeURIComponent(cleanInput.toUpperCase())}`);
     } else {
       setError(true);
       setTimeout(() => setError(false), 3000);
