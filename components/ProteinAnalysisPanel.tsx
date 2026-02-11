@@ -1,4 +1,4 @@
-import { Info, ExternalLink, Activity, Target, BookOpen, ShieldCheck, Volume2, VolumeX } from 'lucide-react';
+import { Info, ExternalLink, Activity, Target, BookOpen, ShieldCheck, Volume2, VolumeX, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface SelectionInfo {
@@ -367,145 +367,114 @@ export default function ProteinAnalysisPanel({ uniprotId, metadata, loading: str
     }
 
     return (
-        <div className="h-full w-96 flex flex-col border-l border-slate-800 bg-slate-950/50 backdrop-blur">
-            {/* Tabs */}
-            <div className="flex border-b border-slate-800">
+        <div className="h-full w-80 flex flex-col border-l border-slate-900 bg-[#020617] z-20">
+            {/* Integrated Tabs */}
+            <div className="flex h-10 border-b border-slate-900 px-2 items-end">
                 <button
                     onClick={() => setActiveTab('analysis')}
-                    className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'analysis' ? 'text-blue-400 border-b-2 border-blue-500 bg-blue-500/5' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'analysis' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                     Analysis
+                    {activeTab === 'analysis' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
                 </button>
                 <button
                     onClick={() => setActiveTab('chat')}
-                    className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'chat' ? 'text-emerald-400 border-b-2 border-emerald-500 bg-emerald-500/5' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'chat' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}
                 >
-                    AlphaBot AI
+                    AlphaBot
+                    {activeTab === 'chat' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6">
                 {activeTab === 'analysis' ? (
                     <>
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold tracking-tight text-white">Insights</h2>
-                            <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-400 border border-blue-500/20">
-                                Gemini v1.5
-                            </div>
-                        </div>
+                        {/* Selection Inspector */}
+                        <section className="space-y-3">
+                            <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 flex items-center justify-between">
+                                <span>0x_SELECTION_SPEC</span>
+                                {selectedPart && <span className="text-blue-500 animate-pulse">ACTIVE</span>}
+                            </h3>
 
-                        {/* General Info / WH Questions */}
-                        <section className="space-y-4 rounded-xl border border-white/5 bg-slate-900/20 p-4 relative overflow-hidden">
-                            {selectedPart && (
-                                <div className="absolute inset-0 bg-blue-600/5 backdrop-blur-3xl animate-in fade-in duration-500" />
-                            )}
-                            <div className="relative z-10 space-y-4">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 flex items-center justify-between gap-2">
-                                    <span className="flex items-center gap-2 px-1"><Info className="h-3.5 w-3.5 text-blue-400" /> Selection Analysis</span>
-                                    {selectedPart && (
-                                        <div className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 text-[9px] font-black animate-pulse">LIVE</div>
+                            {selectedPart ? (
+                                <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-bold text-white">{selectedPart.residueName} {selectedPart.residueIndex}</span>
+                                            <span className="text-[9px] text-slate-500 uppercase">Chain {selectedPart.chainId}</span>
+                                        </div>
+                                        <div className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase ${selectedPart.type === 'helix' ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-800 text-slate-400'}`}>
+                                            {selectedPart.type}
+                                        </div>
+                                    </div>
+                                    {selectionLoading ? (
+                                        <div className="space-y-1.5 py-1">
+                                            <div className="h-1.5 w-full bg-white/5 animate-pulse rounded" />
+                                            <div className="h-1.5 w-3/4 bg-white/5 animate-pulse rounded" />
+                                        </div>
+                                    ) : (
+                                        <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                                            {selectionAnalysis || selectedPart.description}
+                                        </p>
                                     )}
-                                </h3>
-
-                                {selectedPart ? (
-                                    <div className="bg-white/5 rounded-lg p-3 border border-white/10 space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">
-                                                Chain {selectedPart.chainId} | {selectedPart.residueName} {selectedPart.residueIndex}
-                                            </p>
-                                            <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${selectedPart.type === 'helix' ? 'bg-indigo-500/20 text-indigo-400' : selectedPart.type === 'sheet' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-500/20 text-slate-400'}`}>
-                                                {selectedPart.type}
-                                            </span>
-                                        </div>
-                                        {selectionLoading ? (
-                                            <div className="space-y-2 py-1">
-                                                <div className="h-2 w-full bg-white/5 animate-pulse rounded" />
-                                                <div className="h-2 w-3/4 bg-white/5 animate-pulse rounded" />
-                                            </div>
-                                        ) : (
-                                            <p className="text-xs text-slate-300 leading-relaxed italic">
-                                                {selectionAnalysis || selectedPart.description}
-                                            </p>
-                                        )}
-                                        {selectedPart.confidence !== undefined && (
-                                            <div className="pt-1 flex items-center gap-2">
-                                                <div className="h-1 flex-1 bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-blue-500" style={{ width: `${selectedPart.confidence}%` }} />
-                                                </div>
-                                                <span className="text-[8px] font-bold text-slate-500">pLDDT: {Math.round(selectedPart.confidence)}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="py-4 text-center">
-                                        <div className="mx-auto h-8 w-8 rounded-full border border-dashed border-slate-700 flex items-center justify-center mb-2">
-                                            <Target className="h-4 w-4 text-slate-600" />
-                                        </div>
-                                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Residue Not Selected</p>
-                                        <p className="text-[9px] text-slate-600 mt-1">Click any part of the 3D model to inspect</p>
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            ) : (
+                                <div className="rounded-lg border border-dashed border-slate-900 p-4 text-center">
+                                    <p className="text-[9px] font-bold text-slate-700 uppercase tracking-widest">Awaiting residency focus</p>
+                                </div>
+                            )}
                         </section>
 
-                        <div className="space-y-6">
-                            <div className="rounded-xl bg-blue-500/5 p-4 border border-blue-500/10">
-                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-400 mb-3 flex items-center gap-2">
-                                    <Activity className="h-3 w-3" /> Identity & Function
-                                </h3>
-                                <div className="space-y-4">
-                                    <section className="space-y-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h4 className="text-xs font-semibold text-slate-200">What it is</h4>
-                                            <span className="text-[8px] font-bold text-slate-600 border border-slate-800 px-1 rounded uppercase">Source: UniProt</span>
-                                        </div>
-                                        {loading ? <div className="h-3 w-full animate-pulse rounded bg-slate-800/50" /> : <p className="text-sm text-slate-400 leading-relaxed">{analysis?.identity}</p>}
-                                    </section>
-                                    <section className="space-y-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h4 className="text-xs font-semibold text-slate-200">What it does</h4>
-                                            <span className="text-[8px] font-bold text-slate-600 border border-slate-800 px-1 rounded uppercase">Source: UniProt</span>
-                                        </div>
-                                        {loading ? <div className="h-3 w-full animate-pulse rounded bg-slate-800/50" /> : <p className="text-sm text-slate-400 leading-relaxed">{analysis?.function}</p>}
-                                    </section>
-                                </div>
+                        {/* Analysis Sections */}
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-2">
+                                    <div className="h-1 w-1 bg-blue-500 rounded-full" /> 0x_FUNCTIONAL_ROLE
+                                </h4>
+                                {loading ? (
+                                    <div className="space-y-2">
+                                        <div className="h-2 w-full bg-slate-900 animate-pulse rounded" />
+                                        <div className="h-2 w-5/6 bg-slate-900 animate-pulse rounded" />
+                                    </div>
+                                ) : (
+                                    <p className="text-[11px] text-slate-300 font-medium leading-relaxed">{analysis?.function}</p>
+                                )}
                             </div>
 
-                            <div className="rounded-xl bg-indigo-500/5 p-4 border border-indigo-500/10">
-                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-3 flex items-center gap-2">
-                                    <ShieldCheck className="h-3 w-3" /> Structural Context
-                                </h3>
-                                <div className="space-y-4">
-                                    <section className="space-y-1">
-                                        <h4 className="text-xs font-semibold text-slate-200">What structure shows</h4>
-                                        {loading ? <div className="h-3 w-full animate-pulse rounded bg-slate-800/50" /> : <p className="text-sm text-slate-400 leading-relaxed">{analysis?.visuals}</p>}
-                                    </section>
-                                    <section className="space-y-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h4 className="text-xs font-semibold text-slate-200">Reliability</h4>
-                                            <span className="text-[8px] font-bold text-slate-600 border border-slate-800 px-1 rounded uppercase">Source: AlphaFold</span>
-                                        </div>
-                                        {loading ? <div className="h-3 w-full animate-pulse rounded bg-slate-800/50" /> : <p className="text-sm text-slate-400 leading-relaxed italic">{analysis?.reliability}</p>}
-                                    </section>
-                                </div>
+                            <div className="space-y-2">
+                                <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-2">
+                                    <div className="h-1 w-1 bg-indigo-500 rounded-full" /> 0x_STRUCTURAL_SYNOPSIS
+                                </h4>
+                                {loading ? (
+                                    <div className="space-y-2">
+                                        <div className="h-2 w-full bg-slate-900 animate-pulse rounded" />
+                                        <div className="h-2 w-4/5 bg-slate-900 animate-pulse rounded" />
+                                    </div>
+                                ) : (
+                                    <p className="text-[11px] text-slate-300 font-medium leading-relaxed">{analysis?.visuals}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-2">
+                                    <div className="h-1 w-1 bg-emerald-500 rounded-full" /> 0x_CONFIDENCE_RATING
+                                </h4>
+                                {loading ? (
+                                    <div className="h-2 w-full bg-slate-900 animate-pulse rounded" />
+                                ) : (
+                                    <p className="text-[11px] text-slate-400 font-medium leading-relaxed italic">{analysis?.reliability}</p>
+                                )}
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-slate-800 space-y-4">
-                            <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Source:</span>
-                                    <div className="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[9px] font-bold border border-blue-500/20">UniProt</div>
-                                </div>
-                                <span className="text-[9px] text-slate-600 font-medium italic">Educational summary generated from UniProt and AlphaFold data.</span>
-                            </div>
+                        <div className="pt-4 border-t border-slate-900">
                             <a
                                 href={`https://www.uniprot.org/uniprotkb/${uniprotId}/entry`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-800 py-3 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-900 hover:text-white"
+                                className="flex w-full items-center justify-between rounded-lg border border-slate-900 bg-slate-950/50 px-3 py-2 text-[10px] font-bold text-slate-500 transition-all hover:text-white hover:bg-slate-900"
                             >
-                                Official UniProt Page
+                                UNIPROT_KNOWLEDGEBASE
                                 <ExternalLink className="h-3 w-3" />
                             </a>
                         </div>
@@ -514,76 +483,54 @@ export default function ProteinAnalysisPanel({ uniprotId, metadata, loading: str
                     <div className="flex h-full flex-col">
                         <div className="flex-1 space-y-4">
                             {messages.length === 0 && (
-                                <div className="text-center py-12">
-                                    <div className="mx-auto h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20 text-emerald-400">
-                                        AI
-                                    </div>
-                                    <p className="text-xs text-slate-500">Ask AlphaBot about this structure.<br />Try: "Highlight helices"</p>
+                                <div className="text-center py-8">
+                                    <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">Awaiting commands...</p>
                                 </div>
                             )}
                             {messages.map((m, i) => (
                                 <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-200 border border-white/5'}`}>
+                                    <div className={`max-w-[90%] rounded-lg px-3 py-2 text-[11px] font-medium leading-relaxed ${m.role === 'user' ? 'bg-blue-600/10 text-blue-400 border border-blue-600/20' : 'bg-slate-950 text-slate-300 border border-white/5 shadow-xl'}`}>
                                         {m.text}
                                     </div>
                                 </div>
                             ))}
                             {chatLoading && (
                                 <div className="flex justify-start">
-                                    <div className="rounded-2xl bg-slate-800 px-4 py-2 text-sm text-slate-400 animate-pulse">
-                                        AlphaBot is thinking...
+                                    <div className="flex items-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-[11px] font-medium text-slate-500 border border-white/5">
+                                        <div className="flex gap-1">
+                                            <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
+                                        Bot processing...
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {selectedPart && (
-                            <div className="mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Context Selected</span>
-                                    </div>
-                                    <span className="text-xs text-slate-300 font-medium">{selectedPart.fullLabel || selectedPart.label}</span>
-                                </div>
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSendMessage} className="mt-4 pt-4 border-t border-slate-800">
-                            <div className="relative">
+                        <form onSubmit={handleSendMessage} className="mt-4 pt-4 border-t border-slate-900">
+                            <div className="relative group">
                                 <input
                                     type="text"
                                     value={chatInput}
                                     onChange={(e) => setChatInput(e.target.value)}
-                                    placeholder={isListening ? "Listening..." : "Type or click mic to talk..."}
-                                    className={`w-full rounded-xl bg-slate-900 border p-3 pr-24 text-sm text-white focus:ring-0 outline-none transition-all ${isListening ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-slate-800 focus:border-emerald-500/50'}`}
+                                    placeholder={isListening ? "Listening..." : "PROMPT > "}
+                                    className={`w-full rounded-lg bg-black border p-2.5 pr-14 text-[11px] font-mono text-white focus:ring-0 outline-none transition-all ${isListening ? 'border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'border-slate-800 focus:border-blue-600'}`}
                                 />
-                                <div className="absolute right-2 top-1.5 flex items-center gap-1.5">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (isSpeaking) window.speechSynthesis.cancel();
-                                            setIsMuted(!isMuted);
-                                        }}
-                                        className={`rounded-lg p-1.5 text-slate-400 hover:text-white transition-all hover:bg-slate-800`}
-                                        title={isMuted ? "Unmute Voice" : "Mute Voice"}
-                                    >
-                                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                                    </button>
-                                    <div className="h-4 w-px bg-slate-800" />
+                                <div className="absolute right-1 top-1 flex items-center gap-0.5">
                                     <button
                                         type="button"
                                         onClick={toggleListening}
-                                        className={`rounded-lg p-1.5 text-white transition-all shadow-lg ${isListening ? 'bg-red-600 animate-pulse' : 'bg-slate-800 hover:bg-slate-700'}`}
+                                        className={`p-1.5 rounded-md transition-all ${isListening ? 'text-red-500 bg-red-500/10' : 'text-slate-600 hover:text-white'}`}
                                     >
-                                        <Activity className={`h-4 w-4 ${isListening ? 'animate-bounce' : ''}`} />
+                                        <Activity className={`h-3.5 w-3.5 ${isListening ? 'animate-pulse' : ''}`} />
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={chatLoading}
-                                        className="rounded-lg bg-emerald-600 p-1.5 text-white hover:bg-emerald-500 disabled:opacity-50"
+                                        className="p-1.5 rounded-md text-blue-500 hover:text-white disabled:opacity-30"
                                     >
-                                        <ExternalLink className="h-4 w-4 rotate-90" />
+                                        <Zap className="h-3.5 w-3.5 fill-current" />
                                     </button>
                                 </div>
                             </div>

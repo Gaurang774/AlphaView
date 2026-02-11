@@ -256,313 +256,214 @@ export default function Explorer() {
                 <title>AlphaView - {input || 'Loading...'}</title>
             </Head>
 
-            <header className="flex h-16 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 backdrop-blur z-30">
-                <div className="flex items-center gap-4">
-                    <Link href="/" className="flex items-center gap-2 rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-900 hover:text-white">
-                        <ChevronLeft className="h-5 w-5" />
-                        <span className="font-medium">Back</span>
+            <header className="flex h-12 items-center justify-between border-b border-slate-900 bg-[#020617] px-4 z-30">
+                <div className="flex items-center gap-3">
+                    <Link href="/" className="flex items-center gap-2 text-slate-500 transition-colors hover:text-white">
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-blue-600/10 border border-blue-600/20 text-blue-400">
+                            <Zap className="h-3.5 w-3.5" />
+                            <span className="text-[11px] font-black uppercase tracking-tighter">AlphaView</span>
+                        </div>
                     </Link>
-                    <div className="h-6 w-px bg-slate-800" />
-                    <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 overflow-hidden rounded-lg border border-white/5 bg-white/5">
-                            <img src="/logo.png" alt="Logo" className="h-full w-full object-cover" />
-                        </div>
-                        <h1 className="text-lg font-bold tracking-tight text-white capitalize">
-                            {resolvedId || id || 'Loading...'}
-                        </h1>
+                    <span className="text-slate-700 text-xs">/</span>
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-300">
+                        <span className="text-white font-bold">{metadata?.name || id || 'Sequencing...'}</span>
+                        {metadata?.organism && (
+                            <span className="text-slate-500">({metadata.organism})</span>
+                        )}
                     </div>
-                    {metadata && (
-                        <div className="flex items-center gap-3 ml-4 bg-slate-900/50 px-3 py-1 rounded-full border border-white/5">
-                            <span className="text-xs font-semibold text-blue-400 truncate max-w-[150px]">{metadata.name}</span>
-                            <span className="h-3 w-px bg-slate-700" />
-                            <span className="text-[10px] font-medium text-slate-500 italic">{metadata.organism}</span>
-                        </div>
-                    )}
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center bg-slate-900 rounded-full p-1 border border-white/5">
-                        <button
-                            onClick={() => setIsAdvanced(false)}
-                            className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all ${!isAdvanced ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
-                        >
-                            Beginner
-                        </button>
-                        <button
-                            onClick={() => setIsAdvanced(true)}
-                            className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all ${isAdvanced ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
-                        >
-                            Advanced
-                        </button>
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-4">
+                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Structure
                     </div>
 
                     <button
                         id="copy-link-btn"
                         onClick={handleCopyLink}
-                        className="flex items-center gap-2 rounded-md border border-slate-800 bg-slate-900/50 px-3 py-2 text-xs font-semibold text-slate-400 transition-all hover:bg-slate-800 hover:text-white"
+                        className="p-1.5 text-slate-500 hover:text-white transition-colors"
+                        title="Share Structure"
                     >
                         <Share2 className="h-4 w-4" />
-                        Copy Link
                     </button>
-                    <a
-                        href={`https://uniprot.org/uniprot/${resolvedId || id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-md border border-slate-800 bg-slate-900/50 px-3 py-2 text-xs font-semibold text-slate-400 transition-all hover:bg-slate-800 hover:text-white"
-                    >
-                        <ExternalLink className="h-3.5 w-3.5 text-blue-400" />
-                        UniProt
-                    </a>
-                    {isAdvanced && <button className="rounded-md p-2 text-slate-400 hover:bg-slate-900 hover:text-white"><Settings className="h-5 w-5" /></button>}
+
+                    <div className="h-8 w-px bg-slate-900 mx-1" />
+
+                    <div className="flex items-center bg-slate-900/50 rounded-lg p-0.5 border border-white/5">
+                        <button
+                            onClick={() => setIsAdvanced(false)}
+                            className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase transition-all ${!isAdvanced ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                            Beginner
+                        </button>
+                        <button
+                            onClick={() => setIsAdvanced(true)}
+                            className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase transition-all ${isAdvanced ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                            Advanced
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            <main className="flex flex-1 overflow-hidden">
-                <div className="relative flex-1 bg-[#020617] ring-1 ring-inset ring-white/10 shadow-inner">
-                    {isAdvanced && <GestureController onGesture={handleGesture} />}
+            <main className="flex flex-1 overflow-hidden p-3 gap-3 bg-[#020617]">
+                <div className="relative flex-1 flex flex-col gap-3 min-w-0">
+                    {/* Framed Viewport Container */}
+                    <div className="relative flex-1 rounded-xl border border-white/5 bg-black/20 overflow-hidden shadow-2xl ring-1 ring-white/5">
+                        {isAdvanced && <GestureController onGesture={handleGesture} />}
 
-                    {pdbLoading && (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-slate-950/40 text-blue-400 backdrop-blur-[2px]">
-                            <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-                            <div className="text-center bg-slate-950/60 p-4 rounded-2xl border border-white/5 backdrop-blur-xl">
-                                <p className="font-bold tracking-widest uppercase text-[10px] text-blue-500 mb-1">Structural Sequence</p>
-                                <p className="font-medium text-white">{loadingStep || 'Synthesizing structure...'}</p>
-                                {showLoadingHint && (
-                                    <p className="mt-2 text-[10px] text-slate-500 animate-pulse">Large proteins may take longer.</p>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {error && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900">
-                            <div className="flex max-w-md flex-col items-center gap-4 rounded-lg bg-red-950/50 p-8 text-center text-red-400 border border-red-900/50 backdrop-blur">
-                                <AlertCircle className="h-12 w-12" />
-                                <div>
-                                    <p className="text-xl font-bold">Model Unavailable</p>
-                                    <p className="text-sm opacity-80 mt-1">{error}</p>
-                                </div>
-                                <div className="flex flex-col gap-2 w-full mt-2">
-                                    <a
-                                        href={`https://uniprot.org/uniprot/${resolvedId || input}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="rounded-lg bg-blue-600/20 px-6 py-2.5 text-xs font-bold text-blue-400 hover:bg-blue-600/30 transition-all border border-blue-500/20"
-                                    >
-                                        View UniProt Evidence
-                                    </a>
-                                    <Link href="/" className="rounded-lg bg-white/5 px-6 py-2.5 text-xs font-bold text-slate-400 hover:bg-white/10 transition-all border border-white/10">
-                                        Try a Featured Protein
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {isLargeProtein && !pdbLoading && (
-                        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 animate-in slide-in-from-top duration-500">
-                            <div className="flex items-center gap-3 rounded-full border border-amber-500/20 bg-amber-950/80 px-4 py-2 text-xs font-bold text-amber-400 backdrop-blur-xl shadow-2xl">
-                                <AlertCircle className="h-4 w-4" />
-                                COMPLEX STRUCTURE DETECTED ({metadata?.length} RESIDUES). OPTIMIZING PERFORMANCE...
-                            </div>
-                        </div>
-                    )}
-
-                    {!pdbLoading && !error && pdbData && mounted && (
-                        <ProteinViewer
-                            key={resolvedId}
-                            ref={viewerRef}
-                            pdbData={pdbData}
-                            onSelect={(info) => setSelectedPart(info)}
-                            onConfidenceStats={(stats) => setConfidenceStats(stats)}
-                        />
-                    )}
-
-                    {!pdbLoading && !error && !pdbData && !id && (
-                        <div className="flex h-full w-full items-center justify-center text-slate-500">
-                            <p>Ready for sequencing...</p>
-                        </div>
-                    )}
-
-                    {/* Module 1: Floating Selection Info Card */}
-                    {selectedPart && (
-                        <div className="absolute top-60 right-6 z-40 w-64 animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-none">
-                            <div className="rounded-2xl border border-blue-500/30 bg-slate-950/80 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto">
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${selectedPart.type === 'helix' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20' : selectedPart.type === 'sheet' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/20' : 'bg-slate-500/20 text-slate-400 border border-slate-500/20'}`}>
-                                        {selectedPart.type === 'unknown' ? 'Region' : selectedPart.type}
-                                    </div>
-                                    <button
-                                        onClick={() => setSelectedPart(null)}
-                                        className="text-slate-500 hover:text-white transition-colors"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                </div>
-                                <h4 className="text-sm font-bold text-white mb-1">{selectedPart.label}</h4>
-                                <p className="text-[10px] text-slate-400 leading-relaxed mb-3">
-                                    {selectedPart.description || "Experimental structural segment identified."}
-                                </p>
-
-                                {selectedPart.confidence !== undefined && (
-                                    <div className="space-y-1">
-                                        <div className="flex items-center justify-between text-[8px] font-bold uppercase text-slate-500">
-                                            <span>Local Confidence</span>
-                                            <span className={selectedPart.confidence > 70 ? 'text-blue-400' : 'text-amber-400'}>
-                                                {Math.round(selectedPart.confidence)}%
-                                            </span>
-                                        </div>
-                                        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full transition-all duration-500 ${selectedPart.confidence > 70 ? 'bg-blue-500' : 'bg-amber-500'}`}
-                                                style={{ width: `${selectedPart.confidence}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Top Left: Visual Protocols (Advanced) */}
-                    <div className="absolute top-20 left-6 z-20 flex flex-col gap-4">
-                        {isAdvanced && (
-                            <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4 backdrop-blur-xl shadow-2xl">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2">
-                                    <Settings className="h-3 w-3" /> Visual Protocols
-                                </h3>
-                                <div className="flex flex-col gap-2">
-                                    <button
-                                        onClick={() => {
-                                            setViewMode('default');
-                                            viewerRef.current?.setRepresentation('default');
-                                        }}
-                                        className={`flex items-center justify-between gap-4 rounded-lg px-3 py-2 text-xs font-medium transition-all ${viewMode === 'default' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-white/5'}`}
-                                    >
-                                        Standard View
-                                        <div className="h-1.5 w-1.5 rounded-full bg-current opacity-50" />
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setViewMode('breakdown');
-                                            viewerRef.current?.setRepresentation('breakdown');
-                                        }}
-                                        className={`flex items-center justify-between gap-4 rounded-lg px-3 py-2 text-xs font-medium transition-all ${viewMode === 'breakdown' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-white/5'}`}
-                                    >
-                                        Structure Breakdown
-                                        <div className="h-1.5 w-1.5 rounded-full bg-current opacity-50" />
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            const next = !isDetailedMode;
-                                            setIsDetailedMode(next);
-                                            viewerRef.current?.setRepresentation(next ? 'detailed' : 'cartoon');
-                                        }}
-                                        className={`flex items-center justify-between gap-4 rounded-lg px-3 py-2 text-xs font-medium transition-all ${isDetailedMode ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)]' : 'text-slate-400 hover:bg-white/5'}`}
-                                    >
-                                        Detailed (Atomic)
-                                        <Zap className="h-3.5 w-3.5" />
-                                    </button>
-                                    <div className="h-px bg-white/5 my-1" />
-                                    <button
-                                        onClick={() => {
-                                            const newVal = !showLowConf;
-                                            setShowLowConf(newVal);
-                                            viewerRef.current?.setConfidenceFilter(!newVal);
-                                        }}
-                                        className={`flex items-center justify-between gap-4 rounded-lg px-3 py-2 text-xs font-medium transition-all ${!showLowConf ? 'text-amber-400 bg-amber-400/10' : 'text-slate-400 hover:bg-white/5'}`}
-                                    >
-                                        {showLowConf ? 'Hide Low Confidence' : 'Show All Regions'}
-                                        <ShieldCheck className="h-3.5 w-3.5" />
-                                    </button>
+                        {pdbLoading && (
+                            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-slate-950/40 text-blue-400 backdrop-blur-[2px]">
+                                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                                <div className="text-center">
+                                    <p className="font-bold tracking-widest uppercase text-[9px] text-blue-500 mb-1">Synthesizing</p>
+                                    <p className="text-xs font-medium text-white">{loadingStep || 'Processing...'}</p>
                                 </div>
                             </div>
                         )}
-                    </div>
 
-                    {/* Bottom Utility Bar: Navigation & Status Dashboard */}
-                    <div className="absolute bottom-8 left-8 right-8 z-30 flex items-end justify-between gap-6 pointer-events-none">
-                        <div className="flex flex-col gap-4 max-w-[280px] pointer-events-auto">
-                            {/* Compact Navigation Guide */}
-                            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-4 backdrop-blur-2xl shadow-2xl">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500 mb-3 flex items-center gap-2">
-                                    <Info className="h-3 w-3" /> Navigation
-                                </h3>
-                                <div className="space-y-2 text-[10px] font-medium">
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-400">Rotate</span>
-                                        <span className="text-white">Left Click</span>
+                        {error && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+                                <div className="flex max-w-xs flex-col items-center gap-4 text-center">
+                                    <AlertCircle className="h-10 w-10 text-red-500/50" />
+                                    <div>
+                                        <p className="text-sm font-bold text-white uppercase tracking-widest">Model Unavailable</p>
+                                        <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">{error}</p>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-400">Pan</span>
-                                        <span className="text-white">Right Click</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-400">Zoom</span>
-                                        <span className="text-white">Scroll</span>
-                                    </div>
+                                    <Link href="/" className="mt-2 text-[10px] font-bold text-blue-400 hover:underline uppercase tracking-tighter">
+                                        Return to Search
+                                    </Link>
                                 </div>
                             </div>
+                        )}
 
-                            {/* Confidence Insights Panel */}
+                        {!pdbLoading && !error && pdbData && mounted && (
+                            <ProteinViewer
+                                key={resolvedId}
+                                ref={viewerRef}
+                                pdbData={pdbData}
+                                onSelect={(info) => setSelectedPart(info)}
+                                onConfidenceStats={(stats) => setConfidenceStats(stats)}
+                            />
+                        )}
+
+                        {/* Relative Floating UI inside Viewport */}
+                        <div className="absolute bottom-4 left-4 z-30 pointer-events-none">
                             <ConfidenceInsights stats={confidenceStats} />
                         </div>
 
-                        {/* Central Dashboard Cluster */}
-                        <div className="flex flex-col items-center gap-4 pointer-events-auto">
-                            {!pdbLoading && !error && pdbData && (
-                                <div className="flex items-center gap-3 bg-slate-950/60 p-2 rounded-full border border-white/10 backdrop-blur-xl shadow-2xl">
-                                    <button
-                                        onClick={() => viewerRef.current?.reset()}
-                                        className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-blue-500 transition-all shadow-lg"
-                                    >
-                                        <RefreshCw className="h-3.5 w-3.5" />
-                                        Reset View
-                                    </button>
-
-                                    {isAdvanced && (
-                                        <>
-                                            <div className="h-6 w-px bg-white/10" />
-                                            <button
-                                                onClick={() => viewerRef.current?.setRepresentation('confidence')}
-                                                className="flex items-center gap-2 rounded-full bg-slate-800 px-5 py-2.5 text-xs font-bold text-emerald-400 hover:bg-slate-700 transition-all border border-white/5"
-                                            >
-                                                <ShieldCheck className="h-3.5 w-3.5" />
-                                                Confidence Map
-                                            </button>
-
-                                            <button
-                                                onClick={() => alert(`GESTURE PROTOCOL (EXPERIMENTAL):\n\n1. Enable webcam (top right)\n2. One Finger Out: Rotate structure\n3. Two Fingers Out: Pan / Move structure\n4. Pinch (Thumb+Index): Zoom In/Out\n5. Open Palm: Reset Focus`)}
-                                                className="flex items-center gap-2 rounded-full bg-slate-800 px-5 py-2.5 text-xs font-semibold text-white hover:bg-slate-700 transition-all border border-white/5"
-                                            >
-                                                <Hand className="h-3.5 w-3.5 text-emerald-400" />
-                                                Gestures
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Refined Status Bar */}
-                            {!pdbLoading && !error && pdbData && (
-                                <div className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 bg-slate-950/40 px-4 py-1.5 rounded-full border border-white/5 backdrop-blur-sm">
-                                    Structure Sync Active • <button onClick={() => viewerRef.current?.reset()} className="text-blue-500 hover:underline">Reset Focus</button>
-                                </div>
-                            )}
+                        <div className="absolute top-4 right-4 z-30 flex flex-col gap-2">
+                            <button
+                                onClick={() => viewerRef.current?.reset()}
+                                className="p-2 rounded-lg bg-black/40 border border-white/10 text-slate-400 hover:text-white backdrop-blur-md transition-all pointer-events-auto"
+                                title="Reset Camera"
+                            >
+                                <RefreshCw className="h-4 w-4" />
+                            </button>
+                            <button
+                                className="p-2 rounded-lg bg-black/40 border border-white/10 text-slate-400 hover:text-white backdrop-blur-md transition-all pointer-events-auto"
+                                title="Fullscreen"
+                            >
+                                <Share2 className="h-4 w-4 rotate-90" />
+                            </button>
                         </div>
-
-                        {/* Empty spacer to maintain layout balance */}
-                        <div className="w-[100px] pointer-events-none" />
                     </div>
+
+                    {/* Bottom Metadata Cluster */}
+                    {!pdbLoading && metadata && (
+                        <div className="h-40 rounded-xl border border-white/5 bg-black/20 p-4 shadow-xl flex flex-col gap-3 group transition-all hover:bg-black/30">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500/80 flex items-center gap-2">
+                                    <Info className="h-3 w-3" /> Protein Info
+                                </h3>
+                                <div className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">
+                                    UniProt ID: {resolvedId}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-4 gap-6">
+                                <div className="col-span-1 space-y-1">
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase">Name</p>
+                                    <p className="text-xs font-bold text-white truncate">{metadata.name}</p>
+                                </div>
+                                <div className="col-span-1 space-y-1">
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase">Organism</p>
+                                    <p className="text-xs font-medium text-slate-300 truncate">{metadata.organism}</p>
+                                </div>
+                                <div className="col-span-1 space-y-1">
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase">Sequence</p>
+                                    <p className="text-xs font-medium text-slate-300">{metadata.length} Residues</p>
+                                </div>
+                                <div className="col-span-1 space-y-1">
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase">Reliability</p>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-full bg-blue-500" style={{ width: `${confidenceStats?.avg}%` }} />
+                                        </div>
+                                        <span className="text-[9px] font-bold text-blue-400">{Math.round(confidenceStats?.avg || 0)}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-1 pt-3 border-t border-white/5">
+                                <p className="text-[10px] text-slate-400 leading-relaxed line-clamp-2 italic">
+                                    {metadata.function || "Automatic functional annotation is currently being resolved via genomic evidence."}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                <ProteinAnalysisPanel
-                    uniprotId={resolvedId}
-                    metadata={metadata}
-                    loading={metaLoading}
-                    onAction={handleBotAction}
-                    selectedPart={selectedPart}
-                />
+                <div className="w-80 flex flex-col gap-3 shrink-0">
+                    {/* Visual Protocols (Docked in Sidebar) */}
+                    {isAdvanced && (
+                        <div className="rounded-xl border border-white/5 bg-black/20 p-4 shadow-xl">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 flex items-center gap-2 font-mono">
+                                0x_PROT_MODES
+                            </h3>
+                            <div className="flex flex-col gap-1.5">
+                                <button
+                                    onClick={() => {
+                                        setViewMode('default');
+                                        viewerRef.current?.setRepresentation('default');
+                                    }}
+                                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-[11px] font-bold tracking-tight transition-all ${viewMode === 'default' ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' : 'text-slate-500 hover:bg-white/5'}`}
+                                >
+                                    Standard
+                                    <div className={`h-1.5 w-1.5 rounded-full ${viewMode === 'default' ? 'bg-blue-400' : 'bg-slate-700'}`} />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setViewMode('breakdown');
+                                        viewerRef.current?.setRepresentation('breakdown');
+                                    }}
+                                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-[11px] font-bold tracking-tight transition-all ${viewMode === 'breakdown' ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-600/30' : 'text-slate-500 hover:bg-white/5'}`}
+                                >
+                                    Breakdown
+                                    <div className={`h-1.5 w-1.5 rounded-full ${viewMode === 'breakdown' ? 'bg-indigo-400' : 'bg-slate-700'}`} />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const next = !isDetailedMode;
+                                        setIsDetailedMode(next);
+                                        viewerRef.current?.setRepresentation(next ? 'detailed' : 'cartoon');
+                                    }}
+                                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-[11px] font-bold tracking-tight transition-all ${isDetailedMode ? 'bg-purple-600/20 text-purple-300 border border-purple-600/30' : 'text-slate-500 hover:bg-white/5'}`}
+                                >
+                                    Detailed
+                                    <Zap className="h-3 w-3" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <ProteinAnalysisPanel
+                        uniprotId={resolvedId}
+                        metadata={metadata}
+                        loading={metaLoading}
+                        onAction={handleBotAction}
+                        selectedPart={selectedPart}
+                    />
+                </div>
 
                 <OnboardingTour />
             </main>
