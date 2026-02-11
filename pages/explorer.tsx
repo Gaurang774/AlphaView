@@ -112,7 +112,8 @@ export default function Explorer() {
 
                 if (!isUniprotId) {
                     setLoadingStep('Searching UniProt...');
-                    const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniprotId)}&format=json&limit=1`;
+                    // Refined search: Look specifically for protein names or gene names to avoid broad matches
+                    const searchUrl = `https://rest.uniprot.org/uniprotkb/search?query=name:${encodeURIComponent(uniprotId)}&format=json&limit=1`;
                     const searchResponse = await fetch(searchUrl);
                     if (!searchResponse.ok) {
                         setError('UniProt service is currently busy. Please try again in a moment.');

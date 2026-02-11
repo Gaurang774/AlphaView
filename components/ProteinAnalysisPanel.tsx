@@ -96,20 +96,26 @@ export default function ProteinAnalysisPanel({ uniprotId, metadata, loading: str
                                 messages: [{
                                     role: "user",
                                     content: `Provide a professional structural and functional analysis for the protein with UniProt ID: ${uniprotId}. 
-                                        ${metadata ? `Factual Data from UniProt:
+                                        
+                                        FACTUAL DATA FROM UNIPROT (GROUND TRUTH):
+                                        ${metadata ? `
                                         - Name: ${metadata.name}
                                         - Organism: ${metadata.organism}
                                         - Sequence Length: ${metadata.length} amino acids
-                                        - Functional Role: ${metadata.function || 'Not specified'}
-                                        ` : ''}
-                                        Explain it as if for a non-biologist student.
+                                        - Functional Role: ${metadata.function || 'NOT SPECIFIED'}
+                                        ` : '- NO METADATA AVAILABLE FOR THIS ID.'}
+
+                                        STRICT ZERO-HALLUCINATION INSTRUCTIONS:
+                                        1. ONLY use the provided Factual Data. 
+                                        2. If metadata is missing or sparse, state "Specific biological data is currently restricted or under research" instead of guessing.
+                                        3. Do NOT invent functions, organisms, or structural details not supported by the data or known widespread scientific consensus for this SPECIFIC ID.
+                                        4. If the name "${metadata?.name || uniprotId}" seems biologically irrelevant, treat it as a potential search mismatch and provide a very generic response.
+
                                         Return the result strictly as a JSON object with these EXACT keys:
-                                        "identity": What this protein is (max 2 sentences).
-                                        "function": What it primarily does in the organism (max 2 sentences).
-                                        "visuals": What the structural shape tells us about its mechanics (max 2 sentences).
-                                        "reliability": Non-technical explanation of the AlphaFold confidence (max 2 sentences).
-                                        
-                                        Constraint: AI must NOT hallucinate unknown facts. Use provided data as ground truth. Educational summary generated from UniProt and AlphaFold data.`
+                                        "identity": 1-2 sentences on what it is.
+                                        "function": 1-2 sentences on biological role.
+                                        "visuals": 1-2 sentences on structural significance.
+                                        "reliability": Non-technical explanation of AlphaFold confidence.`
                                 }]
                             })
                         }
