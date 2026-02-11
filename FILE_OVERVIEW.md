@@ -65,3 +65,26 @@ This document provides a comprehensive explanation of each file and folder in th
 | File | Purpose |
 | :--- | :--- |
 | `pages/api/` | Currently hosts lightweight endpoints for proxying or fetching backend resources safely. |
+
+---
+
+## ⚙️ Core Technical Logic
+
+### 3D Visualization (`ProteinViewer.tsx`)
+- **Imperative API**: Uses `useImperativeHandle` to expose `rotate`, `pan`, `zoom`, and `reset` to the `Explorer` controller.
+- **Protocols**: Supports `Standard`, `Breakdown` (Chain-based), `Confidence` (pLDDT Heatmap), and `Detailed` (Atomic) representations.
+- **Selection**: Subscribes to MolStar's interaction behaviors to extract residue-level data and secondary structure types.
+
+### Gesture Interface (`GestureController.tsx`)
+- **CV Pipeline**: Loads Google MediaPipe at runtime for efficient hand tracking.
+- **Gesture Metrics**: Detects "Rotate" (Index Pointing), "Pan" (Two Finger Slanted), "Zoom" (Pinch), and "Reset" (Open Palm).
+- **Smoothing**: Applies exponential weighted averages to raw screen coordinates to provide jitter-free camera control.
+
+### AI Analysis (`ProteinAnalysisPanel.tsx`)
+- **Grounded Prompts**: Sends structural metadata to Groq (Llama 3) to prevent biological hallucinations.
+- **Selection Context**: Sends residue coordinates and types to the AI for specific structural explanations.
+- **Voice Protocol**: Integrated Speech-to-Text and Text-to-Speech for eyes-free protein analysis.
+
+### Data Orchestration (`explorer.tsx`)
+- **Fetch Lifecycle**: Manages the cascade from Search Input -> UniProt Metadata -> AlphaFold PDB -> AI Logic.
+- **Caching**: 24-hour persistent storage of PDB and metadata in `localStorage` for instant return visits.
